@@ -1,0 +1,29 @@
+
+application:
+  name: "orders"
+  testData: true
+
+database:
+  dbms: "postgres"
+  db: "orders"
+  host: orders_db
+#  host: localhost
+  port: 5434
+  user: "postgres"
+  password: "postgres"
+
+kafka:
+  brokers:
+    - host: "localhost"
+      port: 9095
+    - host: "localhost"
+      port: 9097
+    - host: "localhost"
+      port: 9097
+
+  issueOrderTopics:
+    issueOrder: "IssueOrder"
+    removeOrder: "RemoveOrder"
+    markOrderIssued: "MarkOrderIssued"
+    undoIssueOrder: "UndoIssueOrder"
+    confirmIssueOrder: "ConfirmIssueOrder"
