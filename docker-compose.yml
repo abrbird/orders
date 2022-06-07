@@ -2,7 +2,8 @@ version: "3.3"
 
 services:
   orders_db:
-    container_name: orders_db
+#    container_name: orders_db
+    hostname: orders_db
     image: postgres:13.3
     restart: always
     user: root
@@ -16,14 +17,14 @@ services:
       - "5434:5432"
 
   orders_db_migrations:
-    container_name: orders_db_migrations
+#    container_name: orders_db_migrations
     build: ./
     command: /bin/sh -c "/usr/local/bin/goose postgres up -dir ./migrations"
     depends_on:
       - orders_db
 
   orders_service:
-    container_name: orders_service
+#    container_name: orders_service
     build: ./
     command: /bin/sh -c "/usr/local/bin/orders"
     depends_on:
