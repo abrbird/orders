@@ -9,26 +9,51 @@ type SQLOrderRepository struct {
 	store *SQLRepository
 }
 
-//type SQLUser struct {
-//	Id        int64
-//	UserName  sql.NullString
-//	FirstName sql.NullString
-//	LastName  sql.NullString
-//}
-
 func (S SQLOrderRepository) Create(ctx context.Context, order *models.Order) error {
 	//TODO implement me
 	panic("implement me")
 }
 
 func (S SQLOrderRepository) Retrieve(ctx context.Context, orderId int64) models.OrderRetrieve {
-	//TODO implement me
-	panic("implement me")
+	const query = `
+		SELECT 
+    		id,
+			status
+		FROM orders_order
+		WHERE id = $1
+	`
+
+	order := &models.Order{}
+	if err := S.store.dbConnectionPool.QueryRow(
+		ctx,
+		query,
+		orderId,
+	).Scan(
+		&order.Id,
+		&order.Status,
+	); err != nil {
+		return models.OrderRetrieve{Order: nil, Error: models.NotFoundError}
+	}
+	return models.OrderRetrieve{Order: order, Error: nil}
 }
 
 func (S SQLOrderRepository) Update(ctx context.Context, order *models.Order) error {
-	//TODO implement me
-	panic("implement me")
+	const query = `
+		UPDATE orders_order
+		SET (status) = ($2)
+		WHERE id = $1 
+	`
+
+	err := S.store.dbConnectionPool.QueryRow(
+		ctx,
+		query,
+		order.Id,
+		order.Status,
+	)
+	if err != nil {
+		return models.NotFoundError
+	}
+	return nil
 }
 
 func (S SQLOrderRepository) CreateItem(ctx context.Context, orderItem *models.OrderItem) error {

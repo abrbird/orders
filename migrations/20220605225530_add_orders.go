@@ -12,9 +12,9 @@ func init() {
 func upAddOrders(tx *sql.Tx) error {
 	_, err := tx.Exec(`
 		CREATE TABLE orders_order (
-		    id bigint PRIMARY KEY,
+		    id serial PRIMARY KEY,
 			status VARCHAR NOT NULL,
-			created_at TIMESTAMP NOT NULL
+			created_at TIMESTAMP NOT NULL default current_timestamp
 		);
 	`)
 	if err != nil {

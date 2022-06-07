@@ -14,13 +14,11 @@ func (o OrderService) Create(ctx context.Context, repository repository.OrderRep
 }
 
 func (o OrderService) Retrieve(ctx context.Context, repository repository.OrderRepository, orderId int64) models.OrderRetrieve {
-	//TODO implement me
-	panic("implement me")
+	return repository.Retrieve(ctx, orderId)
 }
 
 func (o OrderService) Update(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
-	//TODO implement me
-	panic("implement me")
+	return repository.Update(ctx, order)
 }
 
 func (o OrderService) CreateItem(ctx context.Context, repository repository.OrderRepository, orderItem *models.OrderItem) error {
