@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"expvar"
 	"fmt"
 	"log"
+	"net/http"
+	"runtime"
+	"strconv"
 
 	"gitlab.ozon.dev/zBlur/homework-3/orders/config"
 	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/db"
@@ -11,6 +15,12 @@ import (
 	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/service/implemented_service"
 	wrkr "gitlab.ozon.dev/zBlur/homework-3/orders/internal/worker"
 )
+
+type GoroutinesNum struct{}
+
+func (g *GoroutinesNum) String() string {
+	return strconv.FormatInt(int64(runtime.NumGoroutine()), 10)
+}
 
 func main() {
 	cfg, err := config.ParseConfig("config/config.yml")
@@ -48,6 +58,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	go func() {
+		g := &GoroutinesNum{}
+		expvar.Publish("GoroutinesNum", g)
+		fmt.Println("serving pprof")
+		http.ListenAndServe("127.0.0.1:7997", nil)
+	}()
 
 	<-ctx.Done()
 }
