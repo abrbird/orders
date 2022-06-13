@@ -8,6 +8,21 @@ import (
 
 type OrderService struct{}
 
+func (o OrderService) MarkOrderIssued(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
+
+	order.Status = models.Issued
+
+	err := o.Update(
+		ctx,
+		repository,
+		order,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (o OrderService) Create(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
 	//TODO implement me
 	panic("implement me")

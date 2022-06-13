@@ -6,20 +6,21 @@ application:
 database:
   dbms: "postgres"
   db: "orders"
-  host: orders_db
+#  host: orders_db
 #  host: localhost
-  port: 5432
+  host: 172.17.0.1
+  port: 5434
   user: "postgres"
   password: "postgres"
 
 kafka:
   brokers:
-    - host: "localhost"
-      port: 9095
-    - host: "localhost"
-      port: 9096
-    - host: "localhost"
-      port: 9097
+    - host: "172.17.0.1"
+      port: 19092
+    - host: "172.17.0.1"
+      port: 29092
+    - host: "172.17.0.1"
+      port: 39092
 
   issueOrderTopics:
     issueOrder: "IssueOrder"

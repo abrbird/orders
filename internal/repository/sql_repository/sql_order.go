@@ -32,7 +32,7 @@ func (S SQLOrderRepository) Retrieve(ctx context.Context, orderId int64) models.
 		&order.Id,
 		&order.Status,
 	); err != nil {
-		return models.OrderRetrieve{Order: nil, Error: models.NotFoundError}
+		return models.OrderRetrieve{Order: nil, Error: models.NotFoundError(err)}
 	}
 	return models.OrderRetrieve{Order: order, Error: nil}
 }
@@ -40,8 +40,9 @@ func (S SQLOrderRepository) Retrieve(ctx context.Context, orderId int64) models.
 func (S SQLOrderRepository) Update(ctx context.Context, order *models.Order) error {
 	const query = `
 		UPDATE orders_order
-		SET (status) = ($2)
+		SET status = $2
 		WHERE id = $1 
+		RETURNING id
 	`
 
 	err := S.store.dbConnectionPool.QueryRow(
@@ -49,9 +50,11 @@ func (S SQLOrderRepository) Update(ctx context.Context, order *models.Order) err
 		query,
 		order.Id,
 		order.Status,
+	).Scan(
+		&order.Id,
 	)
 	if err != nil {
-		return models.NotFoundError
+		return models.NotFoundError(err)
 	}
 	return nil
 }
