@@ -2,38 +2,75 @@ package implemented_service
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/cache/redis_cache"
 	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/models"
 	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/repository"
 )
 
-type OrderService struct{}
+type OrderService struct {
+	service *Service
+}
 
-func (o OrderService) MarkOrderIssued(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
+func (o OrderService) Retrieve(ctx context.Context, repository repository.OrderRepository, orderId int64) models.OrderRetrieve {
+	retrieved := o.service.cache.Order().Get(ctx, orderId)
+	if errors.Is(retrieved.Error, redis_cache.Nil) {
+		retrieved = repository.Retrieve(ctx, orderId)
 
-	order.Status = models.Issued
+		if retrieved.Error != nil {
+			return retrieved
+		}
+	}
 
-	err := o.Update(
-		ctx,
-		repository,
-		order,
-	)
+	if err := o.service.cache.Order().Set(ctx, *retrieved.Order); err != nil {
+		retrieved.Order = nil
+		retrieved.Error = err
+		return retrieved
+	}
+
+	return retrieved
+}
+
+func (o OrderService) Update(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
+	err := repository.Update(ctx, order)
 	if err != nil {
 		return err
 	}
+
+	if err = o.service.cache.Order().Set(ctx, *order); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o OrderService) MarkOrderIssued(ctx context.Context, repository repository.OrderRepository, orderId int64) error {
+	orderRetrieved := o.Retrieve(
+		ctx,
+		repository,
+		orderId,
+	)
+
+	if orderRetrieved.Error != nil {
+		return models.NewRetryError(orderRetrieved.Error)
+	}
+
+	orderRetrieved.Order.Status = models.Issued
+	err := o.Update(
+		ctx,
+		repository,
+		orderRetrieved.Order,
+	)
+	if err != nil {
+		return models.NewRetryError(orderRetrieved.Error)
+	}
+
 	return nil
 }
 
 func (o OrderService) Create(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
 	//TODO implement me
 	panic("implement me")
-}
-
-func (o OrderService) Retrieve(ctx context.Context, repository repository.OrderRepository, orderId int64) models.OrderRetrieve {
-	return repository.Retrieve(ctx, orderId)
-}
-
-func (o OrderService) Update(ctx context.Context, repository repository.OrderRepository, order *models.Order) error {
-	return repository.Update(ctx, order)
 }
 
 func (o OrderService) CreateItem(ctx context.Context, repository repository.OrderRepository, orderItem *models.OrderItem) error {

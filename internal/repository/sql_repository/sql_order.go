@@ -9,11 +9,6 @@ type SQLOrderRepository struct {
 	store *SQLRepository
 }
 
-func (S SQLOrderRepository) Create(ctx context.Context, order *models.Order) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (S SQLOrderRepository) Retrieve(ctx context.Context, orderId int64) models.OrderRetrieve {
 	const query = `
 		SELECT 
@@ -57,6 +52,11 @@ func (S SQLOrderRepository) Update(ctx context.Context, order *models.Order) err
 		return models.NotFoundError(err)
 	}
 	return nil
+}
+
+func (S SQLOrderRepository) Create(ctx context.Context, order *models.Order) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (S SQLOrderRepository) CreateItem(ctx context.Context, orderItem *models.OrderItem) error {

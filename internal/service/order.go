@@ -16,5 +16,5 @@ type OrderService interface {
 	RetrieveItems(ctx context.Context, repository repository.OrderRepository, orderId int64) models.OrderItemsRetrieve
 	UpdateItem(ctx context.Context, repository repository.OrderRepository, orderItem *models.OrderItem) error
 
-	MarkOrderIssued(ctx context.Context, repository repository.OrderRepository, order *models.Order) error
+	MarkOrderIssued(ctx context.Context, repository repository.OrderRepository, orderId int64) error
 }

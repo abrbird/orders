@@ -13,6 +13,17 @@ database:
   user: "postgres"
   password: "postgres"
 
+cache:
+  redis:
+    host: 172.17.0.1
+    port: 6381
+    password: redis_pass
+
+tracing:
+  jaeger:
+    host: 172.17.0.1
+    port: 6831
+
 kafka:
   brokers:
     - host: "172.17.0.1"

@@ -4,6 +4,7 @@ import (
 	"context"
 	"expvar"
 	"fmt"
+	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/cache/redis_cache"
 	"log"
 	"net/http"
 	"runtime"
@@ -35,8 +36,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	cache := redis_cache.New(cfg.Cache.Redis)
+
 	repository := sql_repository.New(dbConnPool)
-	service := implemented_service.New()
+	service := implemented_service.New(cache)
 
 	//tracer, closer, err := cfg.NewTracer(config.Logger(jaeger.StdLogger))
 	//defer closer.Close()
