@@ -13,6 +13,12 @@ database:
   user: "postgres"
   password: "postgres"
 
+  shards:
+    - host: 172.17.0.1
+      port: 5461
+    - host: 172.17.0.1
+      port: 5462
+
 cache:
   redis:
     host: 172.17.0.1

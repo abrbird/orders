@@ -8,6 +8,7 @@ services:
     restart: always
     user: root
     networks:
+      - default
       - kafka-net
     environment:
       - POSTGRES_USER=postgres
@@ -18,14 +19,84 @@ services:
     ports:
       - "5434:5432"
 
+  orders_db_shard_1:
+    container_name: orders_db_shard_1
+    hostname: orders_db_shard_1
+    image: postgres:13.3
+    restart: always
+    networks:
+      - default
+      - kafka-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=orders
+    volumes:
+      - ./postgres-data-1:/var/lib/postgresql
+    ports:
+      - "5461:5432"
+
+  orders_db_shard_2:
+    container_name: orders_db_shard_2
+    hostname: orders_db_shard_2
+    image: postgres:13.3
+    restart: always
+    networks:
+      - default
+      - kafka-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=orders
+    volumes:
+      - ./postgres-data-2:/var/lib/postgresql
+    ports:
+      - "5462:5432"
+
   orders_db_migrations:
     container_name: orders_db_migrations
     build: ./
     command: /bin/sh -c "/usr/local/bin/goose postgres up -dir ./migrations"
     networks:
+      - default
       - kafka-net
     depends_on:
       - orders_db
+
+  orders_db_migrations_1:
+    image: gomicro/docker-goose:latest
+    container_name: orders_db_migrations_1
+    build: shards/
+    environment:
+      - DBHOST=orders_db_shard_1
+      - DBUSER=postgres
+      - DBPASSWORD=postgres
+      - DBNAME=orders
+      - DBSSL=disable
+    volumes:
+      - /shards:/shards
+      - /shard_migrations:/shard_migrations
+    networks:
+      - default
+      - kafka-net
+    depends_on:
+      - orders_db_shard_1
+
+  orders_db_migrations_2:
+    image: gomicro/docker-goose:latest
+    container_name: orders_db_migrations_2
+    build: shards/
+    environment:
+      - DBHOST=orders_db_shard_2
+      - DBUSER=postgres
+      - DBPASSWORD=postgres
+      - DBNAME=orders
+      - DBSSL=disable
+    networks:
+      - default
+      - kafka-net
+    depends_on:
+      - orders_db_shard_2
 
   orders_service:
     container_name: orders_service
@@ -49,5 +120,6 @@ services:
       - kafka-net
 
 networks:
+  default:
   kafka-net:
     driver: bridge
