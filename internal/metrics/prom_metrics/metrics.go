@@ -2,6 +2,7 @@ package prom_metrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	cnfg "gitlab.ozon.dev/zBlur/homework-3/orders/config"
 )
 
@@ -12,14 +13,14 @@ type Metrics struct {
 
 func New(cfg *cnfg.Config) *Metrics {
 	mtrcs := &Metrics{
-		Errors: prometheus.NewCounter(
+		Errors: promauto.NewCounter(
 			prometheus.CounterOpts{
 				Name:        "errors",
 				Help:        "Number of common errors.",
 				ConstLabels: prometheus.Labels{"service": cfg.Application.Name},
 			},
 		),
-		KafkaErrors: prometheus.NewCounter(
+		KafkaErrors: promauto.NewCounter(
 			prometheus.CounterOpts{
 				Name:        "kafka_errors",
 				Help:        "Number of Kafka errors.",
@@ -27,8 +28,6 @@ func New(cfg *cnfg.Config) *Metrics {
 			},
 		),
 	}
-	prometheus.Register(mtrcs.Errors)
-	prometheus.Register(mtrcs.KafkaErrors)
 	return mtrcs
 }
 

@@ -52,7 +52,8 @@ func (o OrderService) MarkOrderIssued(ctx context.Context, repository repository
 	)
 
 	if orderRetrieved.Error != nil {
-		return models.NewRetryError(orderRetrieved.Error)
+		//return models.NewRetryError(orderRetrieved.Error)
+		return models.NewRetryError(nil)
 	}
 
 	orderRetrieved.Order.Status = models.Issued
@@ -62,7 +63,8 @@ func (o OrderService) MarkOrderIssued(ctx context.Context, repository repository
 		orderRetrieved.Order,
 	)
 	if err != nil {
-		return models.NewRetryError(orderRetrieved.Error)
+		//return models.NewRetryError(orderRetrieved.Error)
+		return models.NewRetryError(nil)
 	}
 
 	return nil
