@@ -132,7 +132,6 @@ func upAddOrders(tx *sql.Tx) error {
 	)
 
 	query := strings.Join(queryList, "")
-	fmt.Println(query)
 
 	_, err = tx.Exec(query)
 	if err != nil {
