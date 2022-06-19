@@ -63,6 +63,7 @@ func (i *MarkOrderIssuedHandler) ConsumeClaim(session sarama.ConsumerGroupSessio
 			issueOrderMessage.Order.Id,
 		)
 		if err != nil {
+			i.metrics.Error()
 			if errors.Is(err, models.RetryError) {
 				err = i.RetryMarkOrderIssued(issueOrderMessage)
 				if err != nil {

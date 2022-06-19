@@ -11,7 +11,7 @@ type Metrics struct {
 }
 
 func New(cfg *cnfg.Config) *Metrics {
-	return &Metrics{
+	mtrcs := &Metrics{
 		Errors: prometheus.NewCounter(
 			prometheus.CounterOpts{
 				Name:        "errors",
@@ -27,6 +27,9 @@ func New(cfg *cnfg.Config) *Metrics {
 			},
 		),
 	}
+	prometheus.Register(mtrcs.Errors)
+	prometheus.Register(mtrcs.KafkaErrors)
+	return mtrcs
 }
 
 func (m Metrics) Error() {
