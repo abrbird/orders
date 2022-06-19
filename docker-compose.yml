@@ -95,7 +95,11 @@ services:
     container_name: orders_service
     build: ./
     command: /bin/sh -c "/usr/local/bin/orders"
+    ports:
+      - "8402:8402"
+      - "8502:8502"
     networks:
+      - default
       - kafka-net
     depends_on:
       - redis
@@ -110,6 +114,7 @@ services:
     environment:
       - REDIS_PASSWORD=redis_pass
     networks:
+      - default
       - kafka-net
 
 networks:
