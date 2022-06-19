@@ -122,7 +122,7 @@ func upAddOrders(tx *sql.Tx) error {
 				shardTableName,
 				TableName,
 				shardParam.from,
-				shardParam.to,
+				shardParam.to+1,
 				shardServerName,
 			),
 		)
