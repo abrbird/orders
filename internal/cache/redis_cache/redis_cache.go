@@ -2,9 +2,9 @@ package redis_cache
 
 import (
 	"fmt"
+	"github.com/abrbird/orders/config"
+	"github.com/abrbird/orders/internal/cache"
 	"github.com/go-redis/redis/v8"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/config"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/cache"
 	"time"
 )
 

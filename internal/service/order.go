@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/models"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/repository"
+	"github.com/abrbird/orders/internal/models"
+	"github.com/abrbird/orders/internal/repository"
 )
 
 type OrderService interface {

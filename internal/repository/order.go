@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/models"
+	"github.com/abrbird/orders/internal/models"
 )
 
 type OrderRepository interface {

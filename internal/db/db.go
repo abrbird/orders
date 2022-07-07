@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
+	"github.com/abrbird/orders/config"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/config"
 )
 
 func New(dbConfig config.Database, ctx context.Context) (*pgxpool.Pool, error) {

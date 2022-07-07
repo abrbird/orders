@@ -3,8 +3,8 @@ package migrations
 import (
 	"database/sql"
 	"fmt"
+	"github.com/abrbird/orders/config"
 	"github.com/pressly/goose/v3"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/config"
 	"log"
 	"strings"
 )

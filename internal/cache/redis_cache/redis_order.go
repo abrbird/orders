@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/models"
+	"github.com/abrbird/orders/internal/models"
 	"time"
 )
 

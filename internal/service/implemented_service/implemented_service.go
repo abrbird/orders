@@ -1,8 +1,8 @@
 package implemented_service
 
 import (
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/cache"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/service"
+	"github.com/abrbird/orders/internal/cache"
+	"github.com/abrbird/orders/internal/service"
 )
 
 type Service struct {

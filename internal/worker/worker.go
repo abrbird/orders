@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/Shopify/sarama"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/metrics"
+	"github.com/abrbird/orders/internal/metrics"
 	"log"
 	"time"
 
-	cnfg "gitlab.ozon.dev/zBlur/homework-3/orders/config"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/broker/kafka"
-	rpstr "gitlab.ozon.dev/zBlur/homework-3/orders/internal/repository"
-	srvc "gitlab.ozon.dev/zBlur/homework-3/orders/internal/service"
+	cnfg "github.com/abrbird/orders/config"
+	"github.com/abrbird/orders/internal/broker/kafka"
+	rpstr "github.com/abrbird/orders/internal/repository"
+	srvc "github.com/abrbird/orders/internal/service"
 )
 
 type OrdersTrackingWorker struct {

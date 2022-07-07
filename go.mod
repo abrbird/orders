@@ -1,4 +1,4 @@
-module gitlab.ozon.dev/zBlur/homework-3/orders
+module github.com/abrbird/orders
 
 go 1.18
 

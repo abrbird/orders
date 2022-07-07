@@ -2,10 +2,10 @@ package implemented_service
 
 import (
 	"context"
+	"github.com/abrbird/orders/internal/cache/redis_cache"
+	"github.com/abrbird/orders/internal/models"
+	"github.com/abrbird/orders/internal/repository"
 	"github.com/pkg/errors"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/cache/redis_cache"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/models"
-	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/repository"
 )
 
 type OrderService struct {
