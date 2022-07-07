@@ -1,0 +1,56 @@
+
+application:
+  name: "orders"
+  testData: true
+
+database:
+  dbms: "postgres"
+  db: "orders"
+#  host: orders_db
+#  host: localhost
+  host: 172.17.0.1
+  port: 5434
+  user: "postgres"
+  password: "postgres"
+
+  shards:
+    - host: 172.17.0.1
+      port: 5461
+    - host: 172.17.0.1
+      port: 5462
+
+cache:
+  redis:
+    host: 172.17.0.1
+    port: 6381
+    password: redis_pass
+
+monitoring:
+  pprof:
+    host: 0.0.0.0
+    port: 8402
+
+  metrics:
+    host: 0.0.0.0
+    port: 8502
+
+tracing:
+  jaeger:
+    host: 172.17.0.1
+    port: 6831
+
+kafka:
+  brokers:
+    - host: "172.17.0.1"
+      port: 19092
+    - host: "172.17.0.1"
+      port: 29092
+    - host: "172.17.0.1"
+      port: 39092
+
+  issueOrderTopics:
+    issueOrder: "IssueOrder"
+    removeOrder: "RemoveOrder"
+    markOrderIssued: "MarkOrderIssued"
+    undoIssueOrder: "UndoIssueOrder"
+    confirmIssueOrder: "ConfirmIssueOrder"
