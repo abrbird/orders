@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"gitlab.ozon.dev/zBlur/homework-3/orders/internal/metrics"
 	"log"
 	"time"
 
@@ -15,11 +16,14 @@ import (
 
 type OrdersTrackingWorker struct {
 	config          *cnfg.Config
+	repository      rpstr.Repository
+	service         srvc.Service
+	metrics         metrics.Metrics
 	producer        sarama.SyncProducer
 	markOrderIssued *MarkOrderIssuedHandler
 }
 
-func New(cfg *cnfg.Config, repository rpstr.Repository, service srvc.Service) (*OrdersTrackingWorker, error) {
+func New(cfg *cnfg.Config, repository rpstr.Repository, service srvc.Service, metrics metrics.Metrics) (*OrdersTrackingWorker, error) {
 
 	brokerConfig := kafka.NewConfig()
 	producer, err := kafka.NewSyncProducer(cfg.Kafka.Brokers.String(), brokerConfig)
@@ -28,12 +32,16 @@ func New(cfg *cnfg.Config, repository rpstr.Repository, service srvc.Service) (*
 	}
 
 	worker := &OrdersTrackingWorker{
-		config:   cfg,
-		producer: producer,
+		config:     cfg,
+		repository: repository,
+		service:    service,
+		metrics:    metrics,
+		producer:   producer,
 		markOrderIssued: &MarkOrderIssuedHandler{
 			producer:   producer,
 			repository: repository,
 			service:    service,
+			metrics:    metrics,
 			config:     cfg,
 		},
 	}

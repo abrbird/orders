@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3"
 
 services:
   orders_db:
@@ -8,6 +8,7 @@ services:
     restart: always
     user: root
     networks:
+      - default
       - kafka-net
     environment:
       - POSTGRES_USER=postgres
@@ -18,20 +19,87 @@ services:
     ports:
       - "5434:5432"
 
+  orders_db_shard_1:
+    container_name: orders_db_shard_1
+    hostname: orders_db_shard_1
+    image: postgres:13.3
+    restart: always
+    networks:
+      - default
+      - kafka-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=orders
+    volumes:
+      - ./postgres-data-1:/var/lib/postgresql
+    ports:
+      - "5461:5432"
+
+  orders_db_shard_2:
+    container_name: orders_db_shard_2
+    hostname: orders_db_shard_2
+    image: postgres:13.3
+    restart: always
+    networks:
+      - default
+      - kafka-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=orders
+    volumes:
+      - ./postgres-data-2:/var/lib/postgresql
+    ports:
+      - "5462:5432"
+
   orders_db_migrations:
     container_name: orders_db_migrations
     build: ./
-    command: /bin/sh -c "/usr/local/bin/goose postgres up -dir ./migrations"
+    command: /bin/sh -c "sleep 3 && /usr/local/bin/goose postgres up -dir ./migrations"
     networks:
+      - default
       - kafka-net
     depends_on:
       - orders_db
+
+  orders_db_migrations_1:
+    build:
+      context: .
+      dockerfile: Dockerfile-shards
+      args:
+        MIG_DIR: shard_migrations_0
+    container_name: orders_db_migrations_1
+    command: /bin/sh -c "sleep 3 && goose postgres \"host=orders_db_shard_1 port=5432 user=postgres password=postgres dbname=orders sslmode=disable\" up"
+    networks:
+      - default
+      - kafka-net
+    depends_on:
+      - orders_db_shard_1
+
+  orders_db_migrations_2:
+    build:
+      context: .
+      dockerfile: Dockerfile-shards
+      args:
+        MIG_DIR: shard_migrations_1
+    container_name: orders_db_migrations_2
+    command: /bin/sh -c "sleep 3 && goose postgres \"host=orders_db_shard_2 port=5432 user=postgres password=postgres dbname=orders sslmode=disable\" up"
+    networks:
+      - default
+      - kafka-net
+    depends_on:
+      - orders_db_shard_2
 
   orders_service:
     container_name: orders_service
     build: ./
     command: /bin/sh -c "/usr/local/bin/orders"
+    ports:
+      - "8402:8402"
+      - "8502:8502"
     networks:
+      - default
       - kafka-net
     depends_on:
       - redis
@@ -46,8 +114,10 @@ services:
     environment:
       - REDIS_PASSWORD=redis_pass
     networks:
+      - default
       - kafka-net
 
 networks:
+  default:
   kafka-net:
     driver: bridge
